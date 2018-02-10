@@ -11,15 +11,15 @@ Package.describe({
 });
 
 Package.onUse(function(api) {
-  api.versionsFrom('1.6.0');
+  api.versionsFrom('1.6.1');
   api.use('ecmascript');
+  api.use('react-meteor-data');
   api.mainModule('client/smartTable.js', 'client');
+  api.addFiles(['client/paginator.js', 'client/search.js', 'client/smartTable.js', 'client/tableBody.js'], 'client', { isImport: true });
 });
 
-api.addFiles(['client/paginator.js', 'client/search.js', 'client/smartTable.js', 'client/tableBody.js'], 'client', { isImport: true });
-
 Package.onTest(function(api) {
-  api.use('react-meteor-data');
+  //api.use('react-meteor-data');
   api.use('ecmascript');
   api.use('tinytest');
   api.use('react-tabular-table');
@@ -27,22 +27,7 @@ Package.onTest(function(api) {
 });
 
 Npm.depends({
-  react: '^15.6.2',
-  'react-addons-create-fragment': '^15.6.0',
-  'react-addons-css-transition-group': '^15.6.0',
-  'react-addons-linked-state-mixin': '^15.6.0',
-  'react-addons-perf': '^15.4.2',
-  'react-addons-pure-render-mixin': '^15.6.2',
-  'react-addons-test-utils': '^15.6.0',
-  'react-addons-transition-group': '^15.6.0',
-  'react-addons-update': '^15.6.0',
-  'react-chartjs': '^0.8.0',
-  'react-dom': '^15.6.2',
-  'react-meteor-data': '^0.2.10',
-  'react-mounter': '^1.2.0',
-  'react-router': '^4.2.0',
-  'react-router-dom': '^4.2.2',
-  'react-s-alert': '^1.3.1',
-  'semantic-ui-css': '^2.2.12',
-  'semantic-ui-react': '^0.75.1'
+  react: '15.6.2',
+  'semantic-ui-css': '2.2.12',
+  'semantic-ui-react': '0.75.1'
 });
