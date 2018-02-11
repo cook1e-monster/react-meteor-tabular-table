@@ -14,14 +14,16 @@ class TableBody extends Component {
   }
 
   render() {
-    const { documents, columns, options, loading } = this.props;
+    const {
+      documents, columns, options, loading,
+    } = this.props;
 
     return (
       <Table celled selectable>
         <Table.Header>
           <Table.Row>
             {columns.map((item, key) => {
-              let icon = !options.sort[item.data] || options.sort[item.data] === 1 ? 'down' : 'up';
+              const icon = !options.sort[item.data] || options.sort[item.data] === 1 ? 'down' : 'up';
 
               return (
                 <Table.HeaderCell
@@ -29,7 +31,8 @@ class TableBody extends Component {
                     if (item && item.data) this.props.sortBy(item.data);
                   }}
                   key={key}
-                  className="pointer">
+                  className="pointer"
+                >
                   <p>
                     {item.title}
 
@@ -59,15 +62,11 @@ class TableBody extends Component {
               </Table.Cell>
             </Table.Row>
           ) : (
-            documents.map((column, key) => {
-              return (
-                <Table.Row key={key}>
-                  {columns.map((item, key) => {
-                    return <Table.Cell key={key}>{this.__renderColumn(column[item.data], item, column)}</Table.Cell>;
-                  })}
-                </Table.Row>
-              );
-            })
+            documents.map((column, key) => (
+              <Table.Row key={key}>
+                {columns.map((item, key) => <Table.Cell key={key}>{this.__renderColumn(column[item.data], item, column)}</Table.Cell>)}
+              </Table.Row>
+            ))
           )}
         </Table.Body>
 
@@ -88,27 +87,29 @@ class TableBody extends Component {
   }
 }
 
-export default withTracker(({ collection, filters, options, currentPage, setFilter }) => {
+export default withTracker(({
+  collection, filters, options, currentPage, setFilter,
+}) => {
   const subscriptionName = options.name || collection._name;
   const handlerSubscription = Meteor.subscribe(subscriptionName, filters, options);
 
-  var documents = [];
+  let documents = [];
 
   if (handlerSubscription.ready()) {
-    let query = { [`sub_${handlerSubscription.subscriptionId}`]: 1 };
-    let optionsFind = { fields: options.fields, sort: options.sort };
+    const query = { [`sub_${handlerSubscription.subscriptionId}`]: 1 };
+    const optionsFind = { fields: options.fields, sort: options.sort };
 
     documents = collection.find(query, optionsFind).fetch();
   }
 
   const totalItems = Counts.get(`sub_count_${handlerSubscription.subscriptionId}`) || 0;
-  let totalPages = Math.ceil(totalItems / options.limit || 1);
+  const totalPages = Math.ceil(totalItems / options.limit || 1);
   if (currentPage > 1 && totalItems <= options.limit * currentPage) currentPage = totalPages;
 
   return {
     loading: !handlerSubscription.ready(),
     pagination: { totalPages, currentPage, limit: options.limit },
     totalItems,
-    documents
+    documents,
   };
 })(TableBody);

@@ -11,7 +11,7 @@ function search(fields, query) {
     let q = r[3] === 'true' || r[3] === 'false' ? `{"${r[1]}": ${r[3]}}` : `{"${r[1]}": "${r[3]}"}`;
     return JSON.parse(q);
   } else {
-    let search = fields.map((field) => {
+    let search = fields.map(field => {
       return { [field]: { $regex: query, $options: 'i' } };
     });
 
@@ -23,7 +23,7 @@ export default class Search extends Component {
   static propTypes = {
     fields: PropTypes.object,
     filters: PropTypes.object,
-    setSearchFilter: PropTypes.func
+    setSearchFilter: PropTypes.func,
   };
 
   __fields = _.keys(this.props.fields);
@@ -32,7 +32,6 @@ export default class Search extends Component {
 
   handleChange = (e, { name, value }) => {
     this.setState({ [name]: value });
-
     let query = null;
 
     if (value !== '') {
@@ -47,7 +46,13 @@ export default class Search extends Component {
 
     return (
       <Form size="large">
-        <Form.Input width={16} placeholder="Search ..." name="query" value={query} onChange={this.handleChange} />
+        <Form.Input
+          width={16}
+          placeholder="Search ..."
+          name="query"
+          value={query}
+          onChange={this.handleChange}
+        />
       </Form>
     );
   }

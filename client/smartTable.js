@@ -3,13 +3,16 @@ import React, { Component } from 'react';
 import TableBody from './tableBody.js';
 import Search from './search.js';
 import { Select, Form } from 'semantic-ui-react';
-import _ from 'underscore';
+import { _ } from 'meteor/underscore';
+import PropTypes from 'prop-types';
+
+import 'semantic-ui-css/semantic.min.css';
 
 export default class SmartTable extends Component {
   constructor(props) {
     super(props);
 
-    let defaultStates = {
+    const defaultStates = {
       name: props.options.collection._name,
       page: 1,
       perPage: 25,
@@ -18,32 +21,38 @@ export default class SmartTable extends Component {
       skip: 0,
       sort: {},
       reactive: true,
-      debug: false
+      debug: false,
     };
 
     Object.assign(defaultStates, props.options);
 
-    props.options.columns.forEach(function(column) {
+    props.options.columns.forEach((column) => {
       if (column.data) Object.assign(defaultStates.fields, { [column.data]: 1 });
     });
 
     this.state = defaultStates;
   }
 
+  static propTypes = {
+    options: PropTypes.object,
+  };
+
   componentWillReceiveProps({ options }) {
     this.setState({ filters: options.filters });
   }
 
   // == setters ------------------------
-  setFilters = (filters) => this.setState(filters);
+  setFilters(filters) {
+    this.setState(filters);
+  }
 
-  sortBy = (sortBy) => {
-    this.setState((prevState, props) => ({
-      sort: { [sortBy]: prevState.sort[sortBy] ? -prevState.sort[sortBy] : -1 }
+  sortBy(sortBy) {
+    this.setState(prevState => ({
+      sort: { [sortBy]: prevState.sort[sortBy] ? -prevState.sort[sortBy] : -1 },
     }));
-  };
+  }
 
-  search = (query) => {
+  search(query) {
     let filters;
     if (typeof query === 'string') {
       filters = query;
@@ -52,13 +61,15 @@ export default class SmartTable extends Component {
       if (query) Object.assign(filters, query);
     }
 
-    //create empty filter and add props filters
+    // create empty filter and add props filters
     this.setState({ filters, page: 1 });
-  };
+  }
 
   // == render ----------------------------
   render() {
-    const { name, page, fields, sort, skip, limit, reactive, filters, perPage, debug } = this.state;
+    const {
+      name, page, fields, sort, skip, limit, reactive, filters, perPage, debug,
+    } = this.state;
     const { collection, title, columns } = this.props.options;
 
     const options = {
@@ -68,7 +79,7 @@ export default class SmartTable extends Component {
       skip: (page - 1) * perPage + skip,
       limit: perPage,
       reactive,
-      debug: debug || false
+      debug: debug || false,
     };
 
     return (
@@ -83,7 +94,7 @@ export default class SmartTable extends Component {
                   <Form size="large">
                     <Select
                       onChange={(e, data) => {
-                        let { value } = data;
+                        const { value } = data;
                         this.setState({ perPage: Number(value) });
                       }}
                       placeholder="Show entries"

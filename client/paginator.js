@@ -3,25 +3,22 @@ import PropTypes from 'prop-types';
 import { Button } from 'semantic-ui-react';
 
 export default class Paginator extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { displayedPages: [] };
-  }
-
   static propTypes = {
     error: PropTypes.any,
     pagination: PropTypes.object,
     pageCount: PropTypes.number,
     limit: PropTypes.number,
     page: PropTypes.number,
-    containerClass: PropTypes.string
+    containerClass: PropTypes.string,
   };
 
   static defaultProps = {
     containerClass: '',
-    limit: 5, //num rows to show
-    pagination: { currentPage: 1, totalPages: 1 }
+    limit: 5, // num rows to show
+    pagination: { currentPage: 1, totalPages: 1 },
   };
+
+  state = { displayedPages: [] };
 
   componentWillMount() {
     this.setDisplayedPages(this.props);
@@ -71,8 +68,6 @@ export default class Paginator extends React.Component {
     const { value } = data;
 
     if (value > 0 && value <= pagination.totalPages) this.props.handlePage(value);
-
-    return;
   };
 
   handleClickShowPrevious = (event) => {
@@ -95,8 +90,6 @@ export default class Paginator extends React.Component {
     const displayedPages = this.getIntArray(min, min + this.props.limit);
 
     if (displayedPages !== this.state.displayedPages) this.setState({ displayedPages });
-
-    return;
   };
 
   renderPage = (page) => {
@@ -105,7 +98,7 @@ export default class Paginator extends React.Component {
     if (!pagination.currentPage) return;
 
     return (
-      <Button key={page} disabled={Number(pagination.currentPage) === page ? true : false} value={page} onClick={this.handleClickPage}>
+      <Button key={page} disabled={Number(pagination.currentPage) === page} value={page} onClick={this.handleClickPage}>
         {page}
       </Button>
     );
@@ -115,7 +108,7 @@ export default class Paginator extends React.Component {
     const { pagination, containerClass, limit } = this.props;
     const { displayedPages } = this.state;
 
-    const divClass = containerClass.length ? 'pagination-container ' + containerClass : 'pagination-container';
+    const divClass = containerClass.length ? `pagination-container ${containerClass}` : 'pagination-container';
 
     if (pagination.totalPages <= 1) return <div className={divClass} />;
 
@@ -123,7 +116,7 @@ export default class Paginator extends React.Component {
 
     return (
       <Button.Group basic>
-        <Button content="Prev page" onClick={this.handleClickPage} disabled={currentPage === 1 ? true : false} value={currentPage - 1} />
+        <Button content="Prev page" onClick={this.handleClickPage} disabled={currentPage === 1} value={currentPage - 1} />
 
         {displayedPages.length && displayedPages[0] > 1 ? this.renderPage(1) : null}
 
@@ -145,7 +138,7 @@ export default class Paginator extends React.Component {
 
         <Button
           content="Next page"
-          disabled={pagination.currentPage === pagination.totalPages ? true : false}
+          disabled={pagination.currentPage === pagination.totalPages}
           value={currentPage + 1}
           onClick={this.handleClickPage}
         />
