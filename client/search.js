@@ -2,22 +2,7 @@ import React, { Component } from 'react';
 import { Form } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import { _ } from 'meteor/underscore';
-
-function search(fields, query) {
-  let re = /(\w+)([ ]?:[ ]?)(\w+)/i;
-  let r = re.exec(query);
-
-  if (r && r.length === 4) {
-    let q = r[3] === 'true' || r[3] === 'false' ? `{"${r[1]}": ${r[3]}}` : `{"${r[1]}": "${r[3]}"}`;
-    return JSON.parse(q);
-  } else {
-    let search = fields.map(field => {
-      return { [field]: { $regex: query, $options: 'i' } };
-    });
-
-    return { $or: search };
-  }
-}
+import { search } from './search-helper.js';
 
 export default class Search extends Component {
   static propTypes = {
@@ -26,17 +11,21 @@ export default class Search extends Component {
     setSearchFilter: PropTypes.func,
   };
 
+  static defaultProps = {
+    fields: {},
+    filters: {},
+    setSearchFilter() {},
+  };
+
   __fields = _.keys(this.props.fields);
 
   state = { query: '' };
 
   handleChange = (e, { name, value }) => {
     this.setState({ [name]: value });
-    let query = null;
 
-    if (value !== '') {
-      query = search(this.__fields, value);
-    }
+    let query;
+    if (value !== '') query = search(this.__fields, value);
 
     this.props.setSearchFilter(query);
   };
@@ -46,13 +35,7 @@ export default class Search extends Component {
 
     return (
       <Form size="large">
-        <Form.Input
-          width={16}
-          placeholder="Search ..."
-          name="query"
-          value={query}
-          onChange={this.handleChange}
-        />
+        <Form.Input width={16} placeholder="Search ..." name="query" value={query} onChange={this.handleChange} />
       </Form>
     );
   }
